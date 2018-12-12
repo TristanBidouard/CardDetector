@@ -78,24 +78,6 @@ def findContours(img):
 def draw(img, contours):
 	imgWithContours = cv2.drawContours(img, contours, -1, (255, 0, 0), 3)
 	return imgWithContours
-
-"""def detectCards(self, webcam):
-	while True:
-		webcamImg = webcam.read()[1]
-		contoursSort, contourIscard = self.findCards(webcamImg)
-		if len(contoursSort) != 0:
-			cards = []
-			k = 0
-			for i in range(len(contoursSort)):
-				if (contourIscard[i] == 1):
-					cards.append(Cards.preprocess_card(cnts_sort[i],image))
-
-		img = self.draw(webcamImg, contoursSort)
-
-		cv2.imshow('My webcam', img)
-		if cv2.waitKey(1) == 27:
-			break  # esc to quit
-		cv2.destroyAllWindows()"""
 	
 
 def main():
