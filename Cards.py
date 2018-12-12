@@ -22,6 +22,8 @@ SUIT_HEIGHT = 100
 RANK_DIFF_MAX = 2000
 SUIT_DIFF_MAX = 700
 
+font = cv2.FONT_HERSHEY_SIMPLEX
+
 class CardObject:
 
 	def __init__(self):
@@ -154,8 +156,6 @@ def matchCard(Card, trainRanks, trainSuits):
 	i = 0
 
 	if (len(Card.rankImg) != 0) and (len(Card.suitImg) != 0):
-
-		print 1
 		
 		for Trank in trainRanks:
 
@@ -190,9 +190,6 @@ def findContours(img):
 	_, contours, hierarchy = cv2.findContours(img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 	return contours, hierarchy
 
-def draw(img, contours):
-	imgWithContours = cv2.drawContours(img, contours, -1, (255, 0, 0), 3)
-	return imgWithContours
 
 def flattener(img, points, w, h):
 	
@@ -287,6 +284,33 @@ def loadSuits(filepath):
 
 	return trainSuits
 
+def drawResults(img, Card):
+	
+	x = Card.center[0]
+	y = Card.center[1]
+	cv2.circle(img,(x,y),5,(255,0,0),-1)
+
+	rankName = Card.bestRankMatch
+	suitName = Card.bestSuitMatch
+
+	cv2.putText(img,(rankName+' of'),(x-60,y-10),font,1,(0,0,0),3,cv2.LINE_AA)
+	cv2.putText(img,(rankName+' of'),(x-60,y-10),font,1,(50,200,200),2,cv2.LINE_AA)
+
+	cv2.putText(img,suitName,(x-60,y+25),font,1,(0,0,0),3,cv2.LINE_AA)
+	cv2.putText(img,suitName,(x-60,y+25),font,1,(50,200,200),2,cv2.LINE_AA)
+	
+	return img
+
+def drawContours(img, cards):
+
+	if (len(cards) != 0):
+		tempContours = []
+		for i in range(len(cards)):
+			tempContours.append(cards[i].contour)
+		cv2.drawContours(img,tempContours, -1, (255,0,0), 2)
+
+def drawFrameRate(img, frameRate):
+	return cv2.putText(img,"FPS: "+str(int(frameRate)),(10,26),font,0.7,(255,0,255),2,cv2.LINE_AA)
 
 
 

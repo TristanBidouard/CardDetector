@@ -6,6 +6,9 @@ import Cards
 
 def main():
 
+	freq = cv2.getTickFrequency()
+	frameRateCalc = 1
+
 	webcam = cv2.VideoCapture(0)
 
 	path = os.path.dirname(os.path.abspath(__file__))
@@ -14,6 +17,8 @@ def main():
 
 	while True:
 		
+		t1 = cv2.getTickCount()
+
 		img = webcam.read()[1]
 		contoursSort, contourIscard = Cards.findCards(img)
 
@@ -31,10 +36,17 @@ def main():
 					#print cards[k].bestSuitMatch
 					#print cards[k].rankDiff
 					#print cards[k].suitDiff
-					
+					img = Cards.drawResults(img, cards[k])
 					k = k + 1
-		#img = Cards.draw(img, cards)
-		#cv2.imshow('Final', img)
+
+		Cards.drawContours(img, cards)
+		Cards.drawFrameRate(img, frameRateCalc)
+
+		cv2.imshow('CardDetector', img)
+
+		t2 = cv2.getTickCount()
+		time1 = (t2-t1)/freq
+		frameRateCalc = 1/time1
 
 		if cv2.waitKey(1) == 27:
 			break  # esc to quit
