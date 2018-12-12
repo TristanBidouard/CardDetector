@@ -5,8 +5,19 @@ WEBCAM_HEIGHT = 720
 WEBCAM_WIDTH  = 1280 
 
 BKG_THRESH = 60
+CARD_THRESH = 30
+
 CARD_MAX_AREA = 120000
 CARD_MIN_AREA = 25000
+
+CORNER_WIDTH = 32
+CORNER_HEIGHT = 84
+
+RANK_WIDTH = 70
+RANK_HEIGHT = 125
+
+SUIT_WIDTH = 70
+SUIT_HEIGHT = 100
 
 class CardObject:
 
@@ -57,44 +68,50 @@ def preprocessCard(contour, img):
 	#cv2.imshow('Card', Card.warp)
 	#cv2.waitKey(1)
 	
-	"""# Grab corner of warped card image and do a 4x zoom
-	Qcorner = qCard.warp[0:CORNER_HEIGHT, 0:CORNER_WIDTH]
-	Qcorner_zoom = cv2.resize(Qcorner, (0,0), fx=4, fy=4)
+	Qcorner = Card.warp[0:CORNER_HEIGHT, 0:CORNER_WIDTH]
+	QcornerZoom = cv2.resize(Qcorner, (0,0), fx=4, fy=4)
 
-	# Sample known white pixel intensity to determine good threshold level
-	white_level = Qcorner_zoom[15,int((CORNER_WIDTH*4)/2)]
-	thresh_level = white_level - CARD_THRESH
-	if (thresh_level <= 0):
-		thresh_level = 1
-	retval, query_thresh = cv2.threshold(Qcorner_zoom, thresh_level, 255, cv2. THRESH_BINARY_INV)
+	whiteLevel = QcornerZoom[15,int((CORNER_WIDTH*4)/2)]
+	threshLevel = whiteLevel - CARD_THRESH
+	if (threshLevel <= 0):
+		threshLevel = 1
+	_, queryThresh = cv2.threshold(QcornerZoom, threshLevel, 255, cv2.THRESH_BINARY_INV)
 	
-	# Split in to top and bottom half (top shows rank, bottom shows suit)
-	Qrank = query_thresh[20:185, 0:128]
-	Qsuit = query_thresh[186:336, 0:128]
+	Qrank = queryThresh[20:185, 0:128]
+	Qsuit = queryThresh[186:336, 0:128]
 
-	# Find rank contour and bounding rectangle, isolate and find largest contour
-	dummy, Qrank_cnts, hier = cv2.findContours(Qrank, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-	Qrank_cnts = sorted(Qrank_cnts, key=cv2.contourArea,reverse=True)
+	cv2.imshow("Warp", Card.warp)
+	cv2.moveWindow("Warp", 20,20);
+	cv2.imshow("Corner", Qcorner)
+	cv2.moveWindow("Corner", 20, 350);
+	cv2.imshow("Rank", Qrank)
+	cv2.moveWindow("Rank", 250,20);
+	cv2.imshow("Suit", Qsuit)
+	cv2.moveWindow("Suit", 250,250);
 
-	# Find bounding rectangle for largest contour, use it to resize query rank
-	# image to match dimensions of the train rank image
-	if len(Qrank_cnts) != 0:
-		x1,y1,w1,h1 = cv2.boundingRect(Qrank_cnts[0])
-		Qrank_roi = Qrank[y1:y1+h1, x1:x1+w1]
-		Qrank_sized = cv2.resize(Qrank_roi, (RANK_WIDTH,RANK_HEIGHT), 0, 0)
-		qCard.rank_img = Qrank_sized
+	_, QrankCountours, _ = cv2.findContours(Qrank, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+	QrankCountours = sorted(QrankCountours, key=cv2.contourArea,reverse=True)
 
-	# Find suit contour and bounding rectangle, isolate and find largest contour
-	dummy, Qsuit_cnts, hier = cv2.findContours(Qsuit, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-	Qsuit_cnts = sorted(Qsuit_cnts, key=cv2.contourArea,reverse=True)
+	if len(QrankCountours) != 0:
+		x1,y1,w1,h1 = cv2.boundingRect(QrankCountours[0])
+		QrankRoi = Qrank[y1:y1+h1, x1:x1+w1]
+		QrankSized = cv2.resize(QrankRoi, (RANK_WIDTH,RANK_HEIGHT), 0, 0)
+		Card.rankImg = QrankSized
+		cv2.imshow("QrankSized", QrankSized)
+		cv2.moveWindow("QrankSized", 500,20);
+
 	
-	# Find bounding rectangle for largest contour, use it to resize query suit
-	# image to match dimensions of the train suit image
-	if len(Qsuit_cnts) != 0:
-		x2,y2,w2,h2 = cv2.boundingRect(Qsuit_cnts[0])
-		Qsuit_roi = Qsuit[y2:y2+h2, x2:x2+w2]
-		Qsuit_sized = cv2.resize(Qsuit_roi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
-		qCard.suit_img = Qsuit_sized"""
+	_, QsuitContours, _ = cv2.findContours(Qsuit, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+	QsuitContours = sorted(QsuitContours, key=cv2.contourArea,reverse=True)
+	
+	if len(QsuitContours) != 0:
+		x2,y2,w2,h2 = cv2.boundingRect(QsuitContours[0])
+		QsuitRoi = Qsuit[y2:y2+h2, x2:x2+w2]
+		QsuitSized = cv2.resize(QsuitRoi, (SUIT_WIDTH, SUIT_HEIGHT), 0, 0)
+		Card.suitImg = QsuitSized
+		cv2.imshow("QsuiteSized", QsuitSized)
+		cv2.moveWindow("QsuiteSized", 500, 250);
+
 
 	return Card
 

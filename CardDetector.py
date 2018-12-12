@@ -12,14 +12,9 @@ def main():
 	trainRanks = Cards.loadRanks( path + '/Img/')
 	trainSuits = Cards.loadSuits( path + '/Img/')
 
-
-
-	print path
-
 	while True:
 		
 		img = webcam.read()[1]
-		img = cv2.flip(img, 1)
 		contoursSort, contourIscard = Cards.findCards(img)
 
 		cards = []
@@ -35,7 +30,7 @@ def main():
 					#cv2.waitKey(1)
 					k = k + 1
 		#img = Cards.draw(img, cards)
-		cv2.imshow('Final', img)
+		#cv2.imshow('Final', img)
 
 		if cv2.waitKey(1) == 27:
 			break  # esc to quit
