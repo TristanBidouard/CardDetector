@@ -42,8 +42,7 @@ def main():
 		Cards.drawContours(img, cards)
 		Cards.drawFrameRate(img, frameRateCalc)
 
-
-		cv2.imshow('CardDetector', cv2.flip(img, 1))
+		cv2.imshow('CardDetector', img)
 
 		t2 = cv2.getTickCount()
 		time1 = (t2-t1)/freq
