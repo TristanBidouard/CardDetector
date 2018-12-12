@@ -26,8 +26,12 @@ def main():
 			for i in range(len(contoursSort)):
 				if (contourIscard[i] == 1):
 					cards.append(Cards.preprocessCard(contoursSort[i], img))
-					#cv2.imshow('Card', cards[k].warp)
-					#cv2.waitKey(1)
+					cards[k].bestRankMatch, cards[k].bestSuitMatch, cards[k].rankDiff, cards[k].suitDiff = Cards.matchCard(cards[k],trainRanks,trainSuits)
+					#print cards[k].bestRankMatch
+					#print cards[k].bestSuitMatch
+					#print cards[k].rankDiff
+					#print cards[k].suitDiff
+					
 					k = k + 1
 		#img = Cards.draw(img, cards)
 		#cv2.imshow('Final', img)

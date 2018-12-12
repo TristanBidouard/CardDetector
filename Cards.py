@@ -19,6 +19,9 @@ RANK_HEIGHT = 125
 SUIT_WIDTH = 70
 SUIT_HEIGHT = 100
 
+RANK_DIFF_MAX = 2000
+SUIT_DIFF_MAX = 700
+
 class CardObject:
 
 	def __init__(self):
@@ -142,6 +145,46 @@ def findCards(img):
 
 	return contoursSort, contourIscard
 
+def matchCard(Card, trainRanks, trainSuits):
+
+	bestRankMatchDiff = 10000
+	bestSuitMatchDiff = 10000
+	bestRankMatchName = "Unknown"
+	bestSuitMatchName = "Unknown"
+	i = 0
+
+	if (len(Card.rankImg) != 0) and (len(Card.suitImg) != 0):
+
+		print 1
+		
+		for Trank in trainRanks:
+
+				diffImg = cv2.absdiff(Card.rankImg, Trank.img)
+				rankDiff = int(np.sum(diffImg)/255)
+				
+				if rankDiff < bestRankMatchDiff:
+					bestRankDiffImg = diffImg
+					bestRankMatchDiff = rankDiff
+					bestRankName = Trank.name
+
+		for Tsuit in trainSuits:
+				
+				diffImg = cv2.absdiff(Card.suitImg, Tsuit.img)
+				suitDiff = int(np.sum(diffImg)/255)
+				
+				if suitDiff < bestSuitMatchDiff:
+					bestSuitDiffImg = diffImg
+					bestSuitMatchDiff = suitDiff
+					bestSuitName = Tsuit.name
+
+	if (bestRankMatchDiff < RANK_DIFF_MAX):
+		bestRankMatchName = bestRankName
+
+	if (bestSuitMatchDiff < SUIT_DIFF_MAX):
+		bestSuitMatchName = bestSuitName
+
+	return bestRankMatchName, bestSuitMatchName, bestRankMatchDiff, bestSuitMatchDiff
+
 
 def findContours(img):
 	_, contours, hierarchy = cv2.findContours(img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
@@ -243,6 +286,8 @@ def loadSuits(filepath):
 		i = i + 1
 
 	return trainSuits
+
+
 
 
 
